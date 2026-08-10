@@ -23,11 +23,15 @@ bool is_power_of_two(std::size_t n) {
 std::vector<std::complex<double>> dft(const std::vector<std::complex<double>>& x) {
     const std::size_t n = x.size();
     std::vector<std::complex<double>> X(n);
+    const double inv = 2.0 * kPi / static_cast<double>(n);
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static) if (n > 256)
+#endif
     for (std::size_t k = 0; k < n; ++k) {
         std::complex<double> sum(0.0, 0.0);
+        const double angle = -inv * static_cast<double>(k);
         for (std::size_t t = 0; t < n; ++t) {
-            const double angle = -2.0 * kPi * static_cast<double>(k * t) / static_cast<double>(n);
-            sum += x[t] * std::polar(1.0, angle);
+            sum += x[t] * std::polar(1.0, angle * static_cast<double>(t));
         }
         X[k] = sum;
     }
@@ -37,11 +41,15 @@ std::vector<std::complex<double>> dft(const std::vector<std::complex<double>>& x
 std::vector<std::complex<double>> idft(const std::vector<std::complex<double>>& X) {
     const std::size_t n = X.size();
     std::vector<std::complex<double>> x(n);
+    const double inv = 2.0 * kPi / static_cast<double>(n);
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static) if (n > 256)
+#endif
     for (std::size_t t = 0; t < n; ++t) {
         std::complex<double> sum(0.0, 0.0);
+        const double angle = inv * static_cast<double>(t);
         for (std::size_t k = 0; k < n; ++k) {
-            const double angle = 2.0 * kPi * static_cast<double>(k * t) / static_cast<double>(n);
-            sum += X[k] * std::polar(1.0, angle);
+            sum += X[k] * std::polar(1.0, angle * static_cast<double>(k));
         }
         x[t] = sum / static_cast<double>(n);
     }

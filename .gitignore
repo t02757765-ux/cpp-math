@@ -10,6 +10,8 @@ cmake-build-*/
 *.dylib
 *.exe
 *.out
+*.pyd
+*.log
 .vscode/
 .idea/
 CMakeUserPresets.json

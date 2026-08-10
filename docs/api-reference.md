@@ -213,3 +213,47 @@ Katsayılar artan derecede saklanır: `{c₀, c₁, c₂, ...}`.
 | `ode_rk45(f, y0, t0, t1, tol=1e-8)` | Adaptif Dormand-Prince |
 
 Tümü `std::vector<std::pair<double, double>>` (t, y) dizisi döner. RK45, adım boyutunu `tol`'a göre otomatik ayarlar.
+
+## Hipergeometrik Fonksiyonlar (`hypergeometric.hpp`)
+
+| Fonksiyon | Açıklama |
+|---|---|
+| `hypergeometric_1f1(a, b, z)` | Kummer'in birleşik hipergeometrik fonksiyonu ₁F₁(a; b; z) |
+| `hypergeometric_2f1(a, b, c, z)` | Gauss hipergeometrik fonksiyonu ₂F₁(a, b; c; z) |
+| `hypergeometric_pfq(...)` | Genelleştirilmiş pFq serisi |
+| `elliptic_k(m)` | Birinci tür tam eliptik integral K(m) |
+| `elliptic_e(m)` | İkinci tür tam eliptik integral E(m) |
+
+**Notlar:**
+- ₁F₁ ve ₂F₁ Taylor serisi toplamıyla hesaplanır; c ≤ 0 ise `NaN`
+- |z| < 1 için ₂F₁ yakınsar (mutlak yakınsaklık çemberi)
+- `elliptic_k` ve `elliptic_e` AGM / kuvvet serisi ile hesaplanır; m ∈ [0, 1]
+- `K(0) = E(0) = π/2`, `E(1) = 1`
+
+## Otomatik Türev (`autodiff.hpp`)
+
+Header-only. İleri mod dual sayılar ile otomatik türev.
+
+### Sınıf `Dual`
+
+| Üye | Açıklama |
+|---|---|
+| `Dual(value, derivative=0.0)` | Kurucu |
+| `value()` | Değer |
+| `deriv()` | Türev |
+
+### Serbest fonksiyonlar
+
+| Fonksiyon | Açıklama |
+|---|---|
+| `derivative(f, x)` | `f`'in x noktasında türevi (`std::pair<double,double>` döner) |
+| `derivatives(f, x, order)` | x'te ilk `order` türev vektörü |
+| `Dual operator+,-,*,/` | Dual aritmetik |
+| `mathx::sin/cos/exp/log/sqrt/pow/tanh(Dual)` | Dual üzerinde standart fonksiyonlar |
+
+**Örnek:**
+
+```cpp
+auto f = [](const mathx::Dual& x) { return x * x; };
+auto [v, d] = mathx::derivative(f, 3.0);  // v = 9, d = 6
+```

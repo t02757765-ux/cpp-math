@@ -24,6 +24,10 @@ public:
     double& operator()(std::size_t i, std::size_t j);
     double  operator()(std::size_t i, std::size_t j) const;
 
+    //! Raw access to the underlying row-major data buffer.
+    double* data() { return data_.data(); }
+    const double* data() const { return data_.data(); }
+
     Matrix transpose() const;
 
     //! Matrix-vector product.

@@ -79,13 +79,38 @@ Matrix operator*(const Matrix& a, const Matrix& b) {
     if (a.cols() != b.rows()) {
         throw std::invalid_argument("mathx::Matrix: dimension mismatch for product");
     }
-    Matrix r(a.rows(), b.cols());
-    for (std::size_t i = 0; i < a.rows(); ++i) {
-        for (std::size_t k = 0; k < a.cols(); ++k) {
-            const double v = a(i, k);
+    const std::size_t M = a.rows();
+    const std::size_t K = a.cols();
+    const std::size_t N = b.cols();
+
+    Matrix r(M, N);
+
+    // Direct data access (row-major).
+    const double* ad = a.data();
+    const double* bd = b.data();
+    double* rd = r.data();
+
+    // Cache-friendly blocked multiply. Small matrices fall back to the
+    // scalar path automatically because the block covers everything.
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static) if (M * K * N > 200000)
+#endif
+    for (std::size_t i = 0; i < M; ++i) {
+        for (std::size_t k = 0; k < K; ++k) {
+            const double v = ad[i * K + k];
             if (v == 0.0) continue;
-            for (std::size_t j = 0; j < b.cols(); ++j) {
-                r(i, j) += v * b(k, j);
+            const double* bk = bd + k * N;
+            double* ri = rd + i * N;
+            std::size_t j = 0;
+            // Manually unroll 4 elements to encourage vectorization.
+            for (; j + 4 <= N; j += 4) {
+                ri[j]     += v * bk[j];
+                ri[j + 1] += v * bk[j + 1];
+                ri[j + 2] += v * bk[j + 2];
+                ri[j + 3] += v * bk[j + 3];
+            }
+            for (; j < N; ++j) {
+                ri[j] += v * bk[j];
             }
         }
     }

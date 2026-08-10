@@ -17,8 +17,10 @@
 #include "mathx/statistics.hpp"
 #include "mathx/polynomial.hpp"
 #include "mathx/ode.hpp"
+#include "mathx/hypergeometric.hpp"
+#include "mathx/autodiff.hpp"
 
 //! Library version string.
-#define MATHX_VERSION "0.2.0"
+#define MATHX_VERSION "0.3.0"
 
 #endif

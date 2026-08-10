@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(cpp_math VERSION 0.1.0 LANGUAGES CXX)
+project(cpp_math VERSION 0.3.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -11,6 +11,10 @@ endif()
 
 option(MATHX_BUILD_SHARED "Build as a shared library (.dll/.so)" ON)
 option(MATHX_BUILD_TESTS "Build unit tests" OFF)
+option(MATHX_ENABLE_OPENMP "Enable OpenMP parallel acceleration" ON)
+option(MATHX_ENABLE_NATIVE "Enable -march=native / /arch:AVX2 optimizations" ON)
+
+find_package(OpenMP QUIET)
 
 # Export macros for Windows (__declspec) / Unix (visibility)
 if(MATHX_BUILD_SHARED)
@@ -25,6 +29,7 @@ if(MATHX_BUILD_SHARED)
         src/statistics.cpp
         src/polynomial.cpp
         src/ode.cpp
+        src/hypergeometric.cpp
     )
 else()
     add_library(mathx STATIC
@@ -38,6 +43,7 @@ else()
         src/statistics.cpp
         src/polynomial.cpp
         src/ode.cpp
+        src/hypergeometric.cpp
     )
 endif()
 
@@ -52,6 +58,16 @@ if(MSVC)
     target_compile_options(mathx PRIVATE /W4)
 else()
     target_compile_options(mathx PRIVATE -Wall -Wextra)
+endif()
+
+if(MATHX_ENABLE_OPENMP AND OpenMP_CXX_FOUND)
+    target_link_libraries(mathx PUBLIC OpenMP::OpenMP_CXX)
+    target_compile_definitions(mathx PUBLIC MATHX_HAS_OPENMP)
+endif()
+
+# Native/SIMD optimization flags (Release only).
+if(MATHX_ENABLE_NATIVE AND NOT MSVC)
+    target_compile_options(mathx PRIVATE -O3 -march=native -funroll-loops)
 endif()
 
 # Install rules so the library can be consumed by other projects

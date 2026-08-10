@@ -30,6 +30,13 @@
   - `Polynomial` class: evaluation, derivative, integral, roots (exact ≤ 3, Durand-Kerner ≥ 4), division
 - **Statistics**
   - Mean, variance, stddev, median, percentiles, covariance, correlation, skewness, kurtosis
+- **Hypergeometric & elliptic**
+  - Confluent (₁F₁) and Gauss (₂F₁) hypergeometric functions
+  - Complete elliptic integrals K(m) and E(m)
+- **Automatic differentiation**
+  - Header-only forward-mode AD via dual numbers (`Dual`, `derivative`, `derivatives`)
+- **Python bindings**
+  - pybind11 module `mathx` exposing the full API to Python
 - **Constants**
   - π, e, golden ratio, Euler-Mascheroni, Catalan, Apery, Feigenbaum and more
 
@@ -90,7 +97,32 @@ auto sol = mathx::ode_rk45([](double, double y) { return y; }, 1.0, 0.0, 1.0);
 // Statistics
 std::vector<double> data{1, 2, 3, 4, 5};
 double m = mathx::mean(data);                // 3
+
+// Hypergeometric: 2F1(1,1;2;0.5) = 2 ln 2
+double h = mathx::hypergeometric_2f1(1.0, 1.0, 2.0, 0.5);  // 1.38629...
+
+// Elliptic integrals
+double k = mathx::elliptic_k(0.5);          // 1.85407...
+double e = mathx::elliptic_e(0.5);          // 1.35064...
+
+// Automatic differentiation: d/dx x^3 at x=2 -> 12
+auto d = mathx::derivative([](const mathx::Dual& x) { return x * x * x; }, 2.0);
 ```
+
+### Python
+
+```python
+import mathx
+
+mathx.lambert_w(1.0)                       # 0.567143...
+mathx.gamma(5.0)                           # 24.0
+mathx.elliptic_k(0.5)                      # 1.854075...
+A = mathx.Matrix([[2, 0], [0, 2]])
+B = A * A                                  # matmul (OpenMP)
+mathx.solve(mathx.Matrix([[4, 2], [1, 3]]), [6, 4])  # [1, 1]
+```
+
+The Python module is built from `bindings/python/` with pybind11 (see `bindings/python/build.ps1` on Windows).
 
 ## Installation / consumption from another project
 
@@ -129,11 +161,13 @@ docs/            documentation
 
 ## Roadmap
 
-- Bessel functions, elliptic integrals, Airy functions (WIP)
-- Numerical root-finding and integration (WIP)
+- ~~Bessel functions, elliptic integrals, Airy functions~~ ✅
+- ~~Numerical root-finding and integration~~ ✅
+- ~~OpenMP / SIMD acceleration~~ ✅
+- ~~Python bindings (pybind11)~~ ✅
 - Complex matrices and Eigen-style decomposition
-- OpenMP / SIMD acceleration
-- Python bindings (pybind11)
+- Vector/matrix statistical operations
+- Long-double and float instantiations
 
 ## License
 

@@ -1,5 +1,25 @@
 # Sürüm Geçmişi
 
+## 0.3.0 — 2026-08-10
+
+### Yeni modüller
+- **`hypergeometric.hpp`** — ₁F₁, ₂F₁, genelleştirilmiş pFq + tam eliptik integraller K(m), E(m)
+- **`autodiff.hpp`** — Header-only ileri mod otomatik türev (`Dual` sayıları, `derivative`, `derivatives`)
+- **Python bağlamaları** (`bindings/python/`) — pybind11 tabanlı `mathx` modülü: lambert, özel fonksiyonlar, Bessel, hipergeometrik, FFT, integrasyon, kök bulma, ODE, istatistik, `Matrix`, `Polynomial`
+
+### Performans
+- `Matrix::operator*` — OpenMP paralelleştirme + 4x manuel açılım (~50 GFLOP/s, 512×512)
+- `dft`/`idft` — büyük girdiler için OpenMP
+- CMake: `MATHX_ENABLE_OPENMP` ve `MATHX_ENABLE_NATIVE` seçenekleri (`-march=native`, `-funroll-loops`)
+- `benchmarks/` — C++ ve Python (NumPy/scipy karşılaştırmalı) benchmark'lar
+
+### Düzeltmeler
+- `elliptic_e` ikinci tür eliptik integral doğru kuvvet serisiyle yeniden yazıldı
+- `Matrix` için `data()` erişimcisi eklendi (paralel çarpım için)
+
+### Testler
+- `test_hypergeometric`, `test_autodiff` eklendi — toplam 12 test programı
+
 ## 0.2.0 — 2026-08-10
 
 ### Yeni modüller

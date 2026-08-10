@@ -154,3 +154,39 @@ Tek birinci mertebe ODE: `dy/dt = f(t, y)`, `y(t₀) = y₀`.
 **RK45 adım kontrolü:** 4. ve 5. derece çözümlerin farkı yerel hatayı tahmin eder; adım boyutu `tol^(1/5)` oranında büyütülür/küçültülür (güvenlik faktörü 0.9, sınırlar [0.2, 5]).
 
 Yüksek mertebeden sistemler için ODE'yi vektörel olarak kendiniz yazabilir veya birden fazla skaler denklemi ayrı çözebilirsiniz.
+
+## Hipergeometrik Fonksiyonlar
+
+Genelleştirilmiş hipergeometrik seri:
+
+```
+pFq(a₁,...,a_p; b₁,...,b_q; z) = Σ_{n=0}^∞ (a₁)_n···(a_p)_n / ((b₁)_n···(b_q)_n) · z^n / n!
+```
+
+burada `(a)_n` Pochhammer sembolüdür: `(a)_n = a(a+1)···(a+n-1)`.
+
+- **₁F₁(a; b; z)** — Kummer'in fonksiyonu; b ≤ 0 için kutup → `NaN`
+- **₂F₁(a, b; c; z)** — Gauss fonksiyonu; |z| < 1 için mutlak yakınsak
+- Seri toplama göreli hassasiyet 10⁻¹⁵'e kadar devam eder
+
+**Tam eliptik integraller:**
+
+```
+K(m) = ∫₀^{π/2} (1 - m sin²θ)^(-1/2) dθ
+E(m) = ∫₀^{π/2} (1 - m sin²θ)^(1/2) dθ
+```
+
+- **K(m):** AGM yöntemi — π/(2·AGM(1, √(1-m))); m → 1⁻ için logaritmik ayrıca doğru
+- **E(m):** Kuvvet serisi — (π/2)·Σ [(1/2)_n]²/(n!²) · mⁿ/(1-2n)
+- Sınır değerler: K(0) = E(0) = π/2, K(1) = ∞, E(1) = 1
+
+## Otomatik Türev
+
+`Dual` sayıları `x + ε·x'` biçiminde; ε² = 0. Zincir kuralı yoluyla türevler aritmetik işlemlerle birlikte taşınır.
+
+- `Dual(v, d)` bir noktada değeri ve türevi temsil eder
+- Toplama/çarpma kuralı: `(f·g)' = f'·g + f·g'` otomatik uygulanır
+- `derivative(f, x)` tek değişkenli fonksiyonların türevini verir
+- `derivatives(f, x, n)` — yüksek mertebeden (seri) türevleri üretir
+
+**Uygulamalar:** Newton yöntemi için türevler, duyarlılık analizi, optimizasyon gradyanları.

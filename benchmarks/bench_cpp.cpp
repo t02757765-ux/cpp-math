@@ -1,9 +1,15 @@
 // Benchmark for cpp-math core kernels.
 // Compile:  g++ -O3 -fopenmp -Iinclude benchmarks/bench_cpp.cpp -L. -lmathx
+// Run:      bench_cpp.exe [threads]   (default: all)
 #include <cstdio>
 #include <chrono>
 #include <cmath>
+#include <cstdlib>
 #include <vector>
+
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 #include <mathx/mathx.hpp>
 
@@ -77,14 +83,23 @@ void bench_dft() {
 }
 } // namespace
 
-int main() {
-    printf("=== cpp-math benchmark (OpenMP %s) ===\n",
+int main(int argc, char** argv) {
+    const char* nthr = nullptr;
+    if (argc > 1) nthr = argv[1];
 #ifdef _OPENMP
-    "on"
+    if (nthr) omp_set_num_threads(std::atoi(nthr));
+    const int used = omp_get_max_threads();
 #else
-    "off"
+    (void)nthr;
+    const int used = 1;
 #endif
-    );
+    printf("=== cpp-math benchmark (OpenMP %s, %d thread(s)) ===\n",
+#ifdef _OPENMP
+    "on",
+#else
+    "off",
+#endif
+    used);
     bench_matmul();
     bench_fft();
     bench_special();

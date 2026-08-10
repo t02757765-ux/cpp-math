@@ -10,8 +10,15 @@
 #include "mathx/fourier.hpp"
 #include "mathx/special.hpp"
 #include "mathx/matrix.hpp"
+#include "mathx/constants.hpp"
+#include "mathx/bessel.hpp"
+#include "mathx/integration.hpp"
+#include "mathx/roots.hpp"
+#include "mathx/statistics.hpp"
+#include "mathx/polynomial.hpp"
+#include "mathx/ode.hpp"
 
 //! Library version string.
-#define MATHX_VERSION "0.1.0"
+#define MATHX_VERSION "0.2.0"
 
 #endif

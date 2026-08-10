@@ -19,6 +19,12 @@ if(MATHX_BUILD_SHARED)
         src/fourier.cpp
         src/special.cpp
         src/matrix.cpp
+        src/bessel.cpp
+        src/integration.cpp
+        src/roots.cpp
+        src/statistics.cpp
+        src/polynomial.cpp
+        src/ode.cpp
     )
 else()
     add_library(mathx STATIC
@@ -26,6 +32,12 @@ else()
         src/fourier.cpp
         src/special.cpp
         src/matrix.cpp
+        src/bessel.cpp
+        src/integration.cpp
+        src/roots.cpp
+        src/statistics.cpp
+        src/polynomial.cpp
+        src/ode.cpp
     )
 endif()
 
